@@ -1,0 +1,31 @@
+<%- include('partials/header') -%>
+
+<form action="/single_table_view" method="post">
+    <label for="cars">Select a table:</label>
+    <select name="table" id="table">
+      <option value="authors">Authors</option>
+      <option value="articles">Articles</option>
+      <option value="publish">Publishes</option>
+      <option value="writes">Writes</option>
+      <option value="journals">Journals</option>
+    </select>
+    <br><br>
+    <input type="submit" value="Submit">
+  </form>
+
+<table>
+    <tr>
+        <% for (let i = 0; i < displayedHeaders.length; i++) { %>
+        <th><%=displayedHeaders[i]%></th>
+        <%}%>
+    </tr>
+    <% for (let i = 0; i<entries.length; i++) { %>
+    <tr>
+        <% for (let j = 0; j < tableHeaders.length; j++) { %>
+        <td> <%= entries[i][tableHeaders[j]] %></td>
+        <% }%>
+    </tr>
+    <% } %>
+</table>
+
+<%- include('partials/footer') -%>

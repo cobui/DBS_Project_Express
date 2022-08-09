@@ -1,0 +1,18 @@
+{
+  "name": "dbs_projekt_express",
+  "version": "1.0.0",
+  "description": "a database project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dennis Zerihun",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "lodash": "^4.17.21",
+    "pg-promise": "^10.11.1"
+  }
+}
