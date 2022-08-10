@@ -147,8 +147,9 @@ app.post('/all_joined', async(req,res)=>{
     }
 })
 
-app.post('/single_table_view', async(req,res)=> {
-    selectedTable = req.body.table
+app.get('/single_table_view/:table', async (req,res) => {
+    let selectedTable = req.params.table;
+
     try {
         let data = await db.many(`SELECT  * FROM ${selectedTable}`)
         console.log(headers[selectedTable][1], data)
@@ -158,8 +159,42 @@ app.post('/single_table_view', async(req,res)=> {
             entries: data
         })
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
+})
+
+app.post('/single_table_view/:table', async (req,res) => {
+    let selectedTable = req.params.table
+    let tableHeaders = headers[selectedTable][1]
+    let sortOrder = 'asc';
+    let sortColumn = tableHeaders[0];
+    console.log(selectedTable, tableHeaders[1])
+    if (req.body.descButton) {
+        sortOrder = 'desc';
+    }
+
+    tableHeaders.forEach(head => {
+        if (req.body.descButton == head || req.body.ascButton == head) {
+            sortColumn = head;
+        }
+    })
+
+    try {
+        let data = await db.many(`SELECT  * FROM ${selectedTable}`)
+        let sortedData = sortObjectsArray(data, sortColumn, sortOrder)
+        res.render(__dirname + ('/views/home.ejs'), {
+            displayedHeaders: headers[selectedTable][0],
+            tableHeaders: tableHeaders,
+            entries: sortedData
+        })
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+app.post('/single_table_view', async(req,res)=> {
+    selectedTable = req.body.table
+    res.redirect(`/single_table_view/${selectedTable}`)
 })
 
 app.post('/test', (req,res)=> {
