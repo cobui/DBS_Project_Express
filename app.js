@@ -9,7 +9,7 @@ var db = pgp("postgres://postgres:12345@localhost:1834/DBS_Project_Auth_Wrt");
 
 const app = express();
 
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static('public'));
@@ -105,7 +105,7 @@ let headers = {
     'articles': [['Article Title', 'DOI', 'Theme', 'Year of Publication'],['Title', 'DOI', 'Theme', 'Year']],
     'journals': [['Rank', 'Journal Title', 'Impact Factor'],['Rank', 'Title', 'ImpactFactor']],
     'publish': [['Journal Title', 'DOI'],['Title', 'DOI']]
-}
+};
 
 app.get('/', (req,res)=>{
     res.render(__dirname + ('/views/home.ejs'), {
@@ -113,22 +113,25 @@ app.get('/', (req,res)=>{
     });
 });
 
+
 app.post('/all_joined', async(req,res)=>{
     let tableHeaders = ['Title', 'A_Names', 'Year', 'Theme', 'Journal Title', 'Rank'];
     let displayedHeaders = ['Title', 'Author Names', 'Year of Publication', 'Theme', 'Journal Title', 'Journal Rank'];
     
     let sortOrder = 'asc';
     let sortColumn = 'Title';
-    console.log(req.body)
+
+    //resetting the sorting order 
     if (req.body.descButton) {
         sortOrder = 'desc';
-    }
+    };
 
+    //setting the column by which to sort
     tableHeaders.forEach(head => {
         if (req.body.descButton == head || req.body.ascButton == head) {
             sortColumn = head;
-        }
-    })
+        };
+    });
 
     try{
         let queryString = `select articles."Title", authors."A_Names", articles."Year", articles."Theme", journals."Title" as "Journal Title", journals."Rank" from writes, authors, articles, publish, journals where writes."A_Key" = authors."A_Key" and articles."DOI" = writes."DOI" and publish."DOI" = articles."DOI" and publish."Title" = journals."Title"`
@@ -138,21 +141,26 @@ app.post('/all_joined', async(req,res)=>{
             tableHeaders: tableHeaders,
             displayedHeaders: displayedHeaders,
             entries: sortedData
-        })
+        });
     } catch (error) {
         res.render(__dirname + ('/views/error.ejs'), {
             errorMessage: error
-        })
-        console.log(error)
-    }
-})
+        });
+        console.log(error);
+    };
+});
+
+app.post('/single_table_view', (req,res)=> {
+    selectedTable = req.body.table;
+    res.redirect(307, `/single_table_view/${selectedTable}`);
+});
 
 app.get('/single_table_view/:table', async (req,res) => {
     let selectedTable = req.params.table;
 
     try {
         let data = await db.many(`SELECT  * FROM ${selectedTable}`)
-        console.log(headers[selectedTable][1], data)
+        // console.log(headers[selectedTable][1], data)
         res.render(__dirname + ('/views/home.ejs'), {
             displayedHeaders: headers[selectedTable][0],
             tableHeaders: headers[selectedTable][1],
@@ -164,8 +172,8 @@ app.get('/single_table_view/:table', async (req,res) => {
 })
 
 app.post('/single_table_view/:table', async (req,res) => {
-    let selectedTable = req.params.table
-    let tableHeaders = headers[selectedTable][1]
+    let selectedTable = req.params.table;
+    let tableHeaders = headers[selectedTable][1];
     let sortOrder = 'asc';
     let sortColumn = tableHeaders[0];
     console.log(selectedTable, tableHeaders[1])
@@ -178,10 +186,10 @@ app.post('/single_table_view/:table', async (req,res) => {
             sortColumn = head;
         }
     })
-
+    console.log(sortOrder);
     try {
-        let data = await db.many(`SELECT  * FROM ${selectedTable}`)
-        let sortedData = sortObjectsArray(data, sortColumn, sortOrder)
+        let data = await db.many(`SELECT  * FROM ${selectedTable}`);
+        let sortedData = sortObjectsArray(data, sortColumn, sortOrder);
         res.render(__dirname + ('/views/home.ejs'), {
             displayedHeaders: headers[selectedTable][0],
             tableHeaders: tableHeaders,
@@ -189,19 +197,14 @@ app.post('/single_table_view/:table', async (req,res) => {
         })
     } catch (error) {
         console.log(error);
-    }
-})
-
-app.post('/single_table_view', async(req,res)=> {
-    selectedTable = req.body.table
-    res.redirect(`/single_table_view/${selectedTable}`)
-})
+    };
+});
 
 app.post('/test', (req,res)=> {
-    console.log(req.body.ascButton, req.body.descButton)
-})
+    console.log(req.body.ascButton, req.body.descButton);
+});
 
 app.listen(3000, ()=> {
-    console.log('Server started on Port 3000')
-})
+    console.log('Server started on Port 3000');
+});
 
