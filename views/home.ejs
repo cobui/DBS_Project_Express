@@ -1,25 +1,35 @@
 <%- include('partials/header') -%>
 
 <form action="/single_table_view" method="post">
-    <label for="cars">Select a table:</label>
+    <label for="tables">Select a table:</label>
     <select name="table" id="table">
+      <option value="" selected="selected" hidden="hidden">Choose here</option>
       <option value="authors">Authors</option>
       <option value="articles">Articles</option>
       <option value="publish">Publishes</option>
-      <option value="writes">Writes</option>
+      <option value="writes" >Writes</option>
       <option value="journals">Journals</option>
     </select>
     <br><br>
     <input type="submit" value="Submit">
   </form>
+  <form action="/all_joined" method="post">
+    <button>Join All Tables</button>
+  </form>
 
+<% if (entries.length >0) { %>
 <table>
     <tr>
         <% for (let i = 0; i < displayedHeaders.length; i++) { %>
-        <th><%=displayedHeaders[i]%></th>
+          <form action="" method="post">
+            <th name = "header" value=""><%=displayedHeaders[i]%>
+            <button name = "ascButton" value="<%= tableHeaders[i]%>">ASC</button>
+            <button name = "descButton" value="<%= tableHeaders[i]%>">DESC</button>
+          </form>
+        </th>
         <%}%>
     </tr>
-    <% for (let i = 0; i<entries.length; i++) { %>
+    <% for (let i = 0; i < entries.length; i++) { %>
     <tr>
         <% for (let j = 0; j < tableHeaders.length; j++) { %>
         <td> <%= entries[i][tableHeaders[j]] %></td>
@@ -27,5 +37,7 @@
     </tr>
     <% } %>
 </table>
+
+<% }%>
 
 <%- include('partials/footer') -%>
