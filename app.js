@@ -200,6 +200,25 @@ app.post('/single_table_view/:table', async (req,res) => {
     };
 });
 
+app.post('/search', (req,res)=>{
+    let searchParam = Object.keys(req.body);
+    if (searchParam[0] == 'DOI') {
+        let DOI = req.body.DOI;
+        console.log(DOI);
+        res.redirect(`/search_by_DOI/${DOI}`);
+    } else {
+        
+    };
+});
+
+app.get('/search_by_DOI/:DOI', async (req,res) => {
+    let DOI = req.params.DOI;
+    
+    res.render(__dirname + ('/views/home.ejs'), {
+
+    });
+});
+
 app.post('/test', (req,res)=> {
     console.log(req.body.ascButton, req.body.descButton);
 });

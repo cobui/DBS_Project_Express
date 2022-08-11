@@ -1,5 +1,10 @@
 <%- include('partials/header') -%>
+<!-- back to home -->
+<form action="/" method="get">
+  <button type="submit">Home</button>
+</form>
 
+<!-- single table view -->
 <form action="/single_table_view" method="post">
     <label for="tables">Select a table:</label>
     <select name="table" id="table">
@@ -13,9 +18,33 @@
     <br><br>
     <input type="submit" value="Submit">
   </form>
+
+  <!-- all tables joined -->
   <form action="/all_joined" method="post">
-    <button>Join All Tables</button>
+    <button type="submit">Join All Tables</button>
   </form>
+
+  <!-- search for specific article -->
+    <!-- search by DOI -->
+    <form action="/search" method="post">
+      <label for="DOI">Search Articles by DOI</label>
+      <input type="text" name="DOI">
+      <button type="submit">Search</button>
+    </form>
+    <!-- search by Title, year of publication and authors -->
+    <form action="/search" method="post">
+      <p>Search for articles:</p>
+      <label for="Title">Title</label>
+      <input type="text" name="Title">
+      <label for="Year">Year of Publication</label>
+      <input type="text" name = "Year">
+      <label for="A_Names">Author Names</label>
+      <input type="text" name = "A_Names">
+      <button type="submit">Search</button>
+    </form>
+
+  <!-- search for specific journal -->
+    <!-- search by name + journal rank -->
 
 <% if (entries.length >0) { %>
 <table>
