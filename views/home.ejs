@@ -1,4 +1,7 @@
 <%- include('partials/header') -%>
+<h2>Scientific Paper Database</h2>
+<hr>
+<br>
 <!-- back to home -->
 <form action="/" method="get">
   <button type="submit">Home</button>
@@ -15,38 +18,44 @@
       <option value="writes" >Writes</option>
       <option value="journals">Journals</option>
     </select>
-    <br><br>
     <input type="submit" value="Submit">
   </form>
+
+  <hr>
 
   <!-- all tables joined -->
   <form action="/all_joined" method="post">
     <button type="submit">Join All Tables</button>
   </form>
 
+  <hr>
+
   <!-- search for specific article -->
     <!-- search by DOI -->
     <form action="/search" method="post">
-      <label for="DOI">Search Articles by DOI</label>
+      <label for="DOI">Search for single Articles by DOI:</label>
       <input type="text" name="DOI">
       <button type="submit">Search</button>
     </form>
     <!-- search by Title, year of publication and authors -->
     <form action="/search" method="post">
-      <p>Search for articles:</p>
+      <p>Search for multiple articles:</p>
       <label for="Title">Title</label>
       <input type="text" name="Title">
-      <label for="Year">Year of Publication</label>
-      <input type="text" name = "Year">
+      <label for="Year">Year of Publication between</label>
+      <input type="text" name = "yearFrom">
+      <label for="">and</label>
+      <input type="text" name = "yearTo">
       <label for="A_Names">Author Names</label>
       <input type="text" name = "A_Names">
       <button type="submit">Search</button>
     </form>
 
+    <hr>
   <!-- search for specific journal -->
     <!-- search by name + journal rank -->
 
-<% if (entries.length >0) { %>
+<% if (entries.length > 0) { %>
 <table>
     <tr>
         <% for (let i = 0; i < displayedHeaders.length; i++) { %>
