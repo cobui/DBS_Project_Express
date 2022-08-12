@@ -4,6 +4,7 @@ const ejs = require('ejs');
 const _ = require('lodash');
 const sortObjectsArray = require('sort-objects-array');
 const querystring = require('node:querystring');
+const { query } = require('express');
 
 var pgp = require("pg-promise")(/*options*/);
 var db = pgp("postgres://postgres:12345@localhost:1834/DBS_Project_Auth_Wrt");
@@ -119,12 +120,17 @@ app.post('/single_table_view/:table', async (req,res) => {
 
 app.post('/search', (req,res)=>{
     let searchParam = Object.keys(req.body);
-    if (searchParam[0] == 'DOI') {
+    if (searchParam.includes('searchArticleSingle')) {
         let DOI = req.body.DOI;
         res.redirect(`/search_by_DOI/${DOI}`);
-    } else {
+    } else if (searchParam.includes('searchArticleMulti')){
+        delete req.body.searchArticleMulti;
         const queryString = querystring.stringify(req.body);
         res.redirect(`/search_multi/${queryString}`);
+    } else if (searchParam.includes('searchJournal')) {
+        delete req.body.searchJournal;
+        const queryString = querystring.stringify(req.body);
+        res.redirect(`/search_journal/${queryString}`);
     };
 });
 
@@ -205,6 +211,67 @@ app.all('/search_multi/:queryString', async (req,res) => {
             errorMessage: error
         });
     };
+});
+
+app.all('/search_journal/:queryString', async (req,res) => {
+    let decodedQuery = querystring.parse(req.params.queryString);
+    let pgQuery =   `SELECT "Rank", "Title" as "Journal Title", "ImpactFactor" as "Impact Factor" 
+    FROM journals 
+    WHERE "Rank" = "Rank"`
+    let tableHeaders = headers['journals'][1];
+    let sortOrder = 'asc';
+    let sortColumn = tableHeaders[0];
+
+    if (req.body.descButton) {
+        sortOrder = 'desc';
+    };
+
+    for (head in tableHeaders) {
+        if (head == req.body.descButton || head == req.body.ascButton) {
+            sortColumn = head
+        };
+    };
+
+    for (key in decodedQuery) {
+        if (decodedQuery[key]) {
+            switch (key) {
+                case 'Title':
+                    pgQuery += ` and "Title" LIKE '%${decodedQuery[key]}%'`;
+                    break;
+                case 'rankFrom':
+                    pgQuery += ` and "Rank" >= '${decodedQuery[key]}'`;
+                    break;
+                case 'rankTo':
+                    pgQuery += ` and "Rank" <= '${decodedQuery[key]}'`;
+                    break;
+                case 'impactFrom':
+                    pgQuery += ` and "ImpactFactor" >= '${decodedQuery[key]}'`;
+                    break;
+                case 'impactTo':
+                    pgQuery += ` and "ImpactFactor" <= '${decodedQuery[key]}'`;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    console.log(pgQuery);
+    try {
+        let data = await db.any(pgQuery);
+        data = sortObjectsArray(data, sortColumn, sortOrder);
+        console.log(data);
+        res.render(__dirname + ('/views/home.ejs'), {
+            displayedHeaders: headers['journals'][0],
+            tableHeaders: headers['journals'][0],
+            entries: data
+        });
+    } catch (error) {
+        console.log(error);
+        res.render(__dirname + ('/views/error.ejs'), {
+            errorMessage: error
+        });
+    }
+
 });
 
 app.all('/test', (req,res)=> {

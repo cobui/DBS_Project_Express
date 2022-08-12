@@ -19,7 +19,7 @@
       <option value="journals">Journals</option>
     </select>
     <input type="submit" value="Submit">
-  </form>
+</form>
 
   <hr>
 
@@ -32,10 +32,10 @@
 
   <!-- search for specific article -->
     <!-- search by DOI -->
-    <form action="/search" method="post">
-      <label for="DOI">Search for single Articles by DOI:</label>
+    <form action="/test" method="post">
+      <label for="DOI" name = "DOISearch">Search for single Articles by DOI:</label>
       <input type="text" name="DOI">
-      <button type="submit">Search</button>
+      <button name ="searchArticleSingle">Search</button>
     </form>
     <!-- search by Title, year of publication and authors -->
     <form action="/search" method="post">
@@ -48,12 +48,27 @@
       <input type="text" name = "yearTo">
       <label for="A_Names">Author Names</label>
       <input type="text" name = "A_Names">
-      <button type="submit">Search</button>
+      <button type="submit" name ="searchArticleMulti">Search</button>
     </form>
 
     <hr>
   <!-- search for specific journal -->
     <!-- search by name + journal rank -->
+  
+  <form action="/search" method="post">
+    <label for="">Title</label>
+    <input type="text" name="Title">
+    <label for="rankFrom">Rank between</label>
+    <input type="text" name="rankFrom">
+    <label for="rankTo">and</label>
+    <input type="text" name="rankTo">
+    <label for="impactFrom">Impact Factor between</label>
+    <input type="text" name="impactFrom">
+    <label for="impactTo">and</label>
+    <input type="text" name="impactTo">
+    <button name="searchJournal">Search</button>
+  </form>
+
 
 <% if (entries.length > 0) { %>
 <table>
